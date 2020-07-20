@@ -22,3 +22,8 @@ erl_crash.dump
 # Ignore package tarball (built via "mix hex.build").
 svg_generator-*.tar
 
+# Ignore output folder
+/output
+
+# personal junk
+todo.txt

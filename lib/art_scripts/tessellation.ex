@@ -5,11 +5,6 @@ defmodule SvgGenerator.Tessellation do
     https://www.ics.uci.edu/~eppstein/junkyard/tiling.html
   """
   def replicate_motif(list), do: list
-  end
-
-  # Start from center, and work outward
-  def replicate_motif(list) do
-  end
 
   def print() do
     replicate_motif([])

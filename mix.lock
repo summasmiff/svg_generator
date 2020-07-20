@@ -1,3 +1,3 @@
 %{
-  "xml_builder": {:hex, :xml_builder, "2.1.1", "2d6d665f09cf1319e3e1c46035755271b414d99ad8615d0bd6f337623e0c885b", [:mix], [], "hexpm"},
+  "xml_builder": {:hex, :xml_builder, "2.1.1", "2d6d665f09cf1319e3e1c46035755271b414d99ad8615d0bd6f337623e0c885b", [:mix], [], "hexpm", "214c16caa77e66bf0c6b74099a7059ee00de8fd07728d2a3dc32afe344a7452b"},
 }
