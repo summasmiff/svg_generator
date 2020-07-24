@@ -6,26 +6,26 @@ defmodule SvgGenerator.FunkyTruchet do
     When placed in a square tiling of the plane, they can form varied patterns.
   """
 
-  @tile1 {0, 8, :arc}
-  @tile2 {8, 0, :arc}
-  @tile3 {4, 4, :x_line}
-  @tile4 {4, 4, :y_line}
+  @tile1 {0, 8, 0, :arc}
+  @tile2 {8, 0, 1, :arc}
+  @tile3 {4, 4, 0, :x_line}
+  @tile4 {4, 4, 0, :y_line}
   @tiles [@tile1, @tile2]
 
-  def place_tile({x1_mod, x2_mod, :arc}, x, y) do
+  def place_tile({x1_mod, x2_mod, sweep_flag, :arc}, x, y) do
     # x, y are upper left corner of tile
     # moveTo upper center
     move1 = moveTo(x + 4, y)
     # arc to one side
-    arc1 = arc(4, 4, 0, 0, 0, x + x1_mod, y - 4)
+    arc1 = arc(4, 4, 0, 0, sweep_flag, x + x1_mod, y - 4)
     # moveTo lower center
     move2 = moveTo(x + 4, y - 8)
     # arc to other side
-    arc2 = arc(4, 4, 0, 0, 0, x + x2_mod, y - 4)
+    arc2 = arc(4, 4, 0, 0, sweep_flag, x + x2_mod, y - 4)
     move1 <> " " <> arc1 <> " " <> move2 <> " " <> arc2
   end
 
-  def place_tile({_rx, _ry, :x_line}, x, y) do
+  def place_tile({_rx, _ry, _sweep_flag, :x_line}, x, y) do
     tile = moveTo(x, y - 4)
     tile <> " " <> lineTo(x + 8, y - 4) <> " "
   end
