@@ -27,3 +27,4 @@ svg_generator-*.tar
 
 # personal junk
 todo.txt
+.DS_Store

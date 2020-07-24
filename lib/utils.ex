@@ -1,5 +1,6 @@
 defmodule SvgGenerator.Utils do
   require Logger
+
   @moduledoc """
     Various utilities for drawing shapes, including:
       - Trig operations
@@ -20,7 +21,7 @@ defmodule SvgGenerator.Utils do
     1 radian = the length of the arc of the circle
     equals the length of the radius of that circle.
   """
-  def radians(degrees), do: :math.pi * degrees / 180.0
+  def radians(degrees), do: :math.pi() * degrees / 180.0
 
   @doc """
     random noise
@@ -124,9 +125,20 @@ defmodule SvgGenerator.Utils do
   end
 
   @doc """
+   rx ry x-axis-rotation large-arc-flag sweep-flag x y
+   large_arc_flag: determines if arc should be > 180 deg (>180 : 1, < 180: 0)
+   sweep_flag: determines if arc should start with neg or pos degrees (pos: 1, neg: 0)
+   default to "0, 1" for these values if unsure
+  """
+  def arc(rx, ry, x_rot, large_arc_flag, sweep_flag, x, y, rel \\ false) do
+    path = "#{rx}, #{ry}, #{x_rot}, #{large_arc_flag}, #{sweep_flag}, #{x}, #{y}"
+    if rel, do: "a" <> path, else: "A" <> path
+  end
+
+  @doc """
     rel: path is relative to previous path
   """
-  def curveTo(x, y, hand1_x, hand1_y, hand2_x, hand2_y, rel \\ false ) do
+  def curveTo(x, y, hand1_x, hand1_y, hand2_x, hand2_y, rel \\ false) do
     path = "#{x}, #{y}, #{hand1_x}, #{hand1_y}, #{hand2_x}, #{hand2_y}"
     if rel, do: "c" <> path, else: "C" <> path
   end
