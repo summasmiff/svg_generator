@@ -6,10 +6,6 @@ defmodule SvgGenerator.FunkyTruchet do
     When placed in a square tiling of the plane, they can form varied patterns.
   """
 
-  # @tile1 {0, 8, 0, :arc}
-  # @tile2 {8, 0, 1, :arc}
-  # @tile3 {4, 4, 0, :x_line}
-  # @tile4 {4, 4, 0, :y_line}
   @tiles [:tile1, :tile2]
 
   def place_tile(:tile1, x, y) do
@@ -115,16 +111,6 @@ defmodule SvgGenerator.FunkyTruchet do
     )
   end
 
-  # def place_tile({_rx, _ry, _sweep_flag, :x_line}, x, y) do
-  #   tile = moveTo(x, y - 4)
-  #   tile <> " " <> lineTo(x + 8, y - 4) <> " "
-  # end
-
-  # def place_tile({_rx, _ry, :y_line}, x, y) do
-  #   tile = moveTo(x + 4, y)
-  #   tile <> " " <> lineTo(x + 4, y - 8) <> " "
-  # end
-
   def draw_small_rect(x, y, tile_size) do
     rect(x, y, tile_size / 4, tile_size / 4)
   end
@@ -140,7 +126,7 @@ defmodule SvgGenerator.FunkyTruchet do
     y_range = 0..height()
     tile_size = 16
 
-    # grid =
+    # debug_grid =
     #   for x <- x_range,
     #       y <- y_range,
     #       print_tile?(x, tile_size),
@@ -148,7 +134,7 @@ defmodule SvgGenerator.FunkyTruchet do
     #       do: draw_small_rect(x, y, tile_size),
     #       into: []
 
-    # large_grid =
+    # debug_large_grid =
     #   for x <- x_range,
     #       y <- y_range,
     #       print_tile?(x, tile_size),
