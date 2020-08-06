@@ -6,7 +6,7 @@ defmodule SvgGenerator.AngularTruchet do
     When placed in a square tiling of the plane, they can form varied patterns.
   """
 
-  @tiles [:tile1, :tile2, :tile3]
+  @tiles [:tile1, :tile2, :tile3, :tile4]
 
   def place_tile(:tile1, x, y) do
     # x, y are upper left corner of tile
@@ -62,6 +62,30 @@ defmodule SvgGenerator.AngularTruchet do
     h2 = lineTo(x + 16, y + 8)
     i1 = moveTo(x + 12, y + 12)
     i2 = lineTo(x + 16, y + 12)
+    Enum.join([a1, a2, b1, b2, c1, c2, d1, d2, e1, e2, f1, f2, g1, g2, h1, h2, i1, i2], " ")
+  end
+
+  def place_tile(:tile4, x, y) do
+    a1 = moveTo(x, y + 4)
+    a2 = lineTo(x + 16, y + 4)
+    b1 = moveTo(x, y + 8)
+    b2 = lineTo(x + 16, y + 8)
+    c1 = moveTo(x, y + 12)
+    c2 = lineTo(x + 16, y + 12)
+
+    d1 = moveTo(x + 4, y)
+    d2 = lineTo(x + 4, y + 4)
+    e1 = moveTo(x + 8, y)
+    e2 = lineTo(x + 8, y + 4)
+    f1 = moveTo(x + 12, y)
+    f2 = lineTo(x + 12, y + 4)
+
+    g1 = moveTo(x + 4, y + 12)
+    g2 = lineTo(x + 4, y + 16)
+    h1 = moveTo(x + 8, y + 12)
+    h2 = lineTo(x + 8, y + 16)
+    i1 = moveTo(x + 12, y + 12)
+    i2 = lineTo(x + 12, y + 16)
     Enum.join([a1, a2, b1, b2, c1, c2, d1, d2, e1, e2, f1, f2, g1, g2, h1, h2, i1, i2], " ")
   end
 
