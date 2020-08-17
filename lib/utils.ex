@@ -81,6 +81,8 @@ defmodule SvgGenerator.Utils do
 
   @doc """
     points: string of paired x y coordinates
+    coordinate pairs are separated by a single space
+    individual coordinates are separated by a comma and no spaces
     ex: "850,75  958,137.5 958,262.5 850,325 742,262.6 742,137.5"
   """
   def polygon(points, opts \\ []) do

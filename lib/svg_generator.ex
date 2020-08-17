@@ -1,7 +1,7 @@
 defmodule SvgGenerator.CLI do
   require Logger
   import SvgGenerator.Utils
-  import SvgGenerator.FunkyTruchet
+  import SvgGenerator.IsometricCube
 
   @moduledoc """
     compile && run: mix escript.build && ./svg_generator file_name
