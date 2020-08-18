@@ -1,6 +1,7 @@
 defmodule SvgGenerator.Fall do
   require Logger
-  import SvgGenerator.Utils
+  import SvgGenerator.SVG
+
   @moduledoc """
     Copy of Bridget Riley piece: "Fall"
     https://www.tate.org.uk/art/artworks/riley-fall-t00616
@@ -34,6 +35,7 @@ defmodule SvgGenerator.Fall do
     final = Enum.join([a, b, c, d, e, f, g, h, i], "")
     path(final)
   end
+
   def print_line(_), do: ""
 
   @doc """

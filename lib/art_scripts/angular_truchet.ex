@@ -1,4 +1,5 @@
 defmodule SvgGenerator.AngularTruchet do
+  import SvgGenerator.SVG
   import SvgGenerator.Utils
 
   @moduledoc """

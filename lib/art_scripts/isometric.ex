@@ -1,4 +1,5 @@
 defmodule SvgGenerator.IsometricCube do
+  import SvgGenerator.SVG
   import SvgGenerator.Utils
 
   @moduledoc """
@@ -61,19 +62,14 @@ defmodule SvgGenerator.IsometricCube do
     y_amount = y - @center_y
 
     Enum.map(points, fn point ->
-      move_point(point, x_amount, :x)
-      |> move_point(y_amount, :y)
+      move_point(point, x_amount, y_amount)
     end)
   end
 
-  def move_point({x, y}, amount, :x) do
-    new_x = x - amount
-    {new_x, y}
-  end
-
-  def move_point({x, y}, amount, :y) do
-    new_y = y - amount
-    {x, new_y}
+  def move_point({x, y}, x_amount, y_amount) do
+    new_x = x - x_amount
+    new_y = y - y_amount
+    {new_x, new_y}
   end
 
   def rotate_poly(points, degree) do

@@ -1,4 +1,5 @@
 defmodule SvgGenerator.FunkyTruchet do
+  import SvgGenerator.SVG
   import SvgGenerator.Utils
 
   @moduledoc """

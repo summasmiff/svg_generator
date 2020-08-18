@@ -1,7 +1,8 @@
 defmodule SvgGenerator.Hesitate do
   require Logger
   require Integer
-  import SvgGenerator.Utils
+  import SvgGenerator.SVG
+
   @moduledoc """
     Copy of Bridget Riley piece: "Hesitate"
     https://www.tate.org.uk/art/artworks/riley-hesitate-t04132
@@ -51,11 +52,14 @@ defmodule SvgGenerator.Hesitate do
     last x row
   """
   def print_hesitate(list, 0, b, c, a1, b2) do
-    ry = b2/@magic
-    list = case Integer.is_odd(b) do
-      false -> list
-      _ -> [ellipse(0, b*@zazz, 1, ry) | list]
-    end
+    ry = b2 / @magic
+
+    list =
+      case Integer.is_odd(b) do
+        false -> list
+        _ -> [ellipse(0, b * @zazz, 1, ry) | list]
+      end
+
     print_hesitate(list, 0, b - 1, c, a1, b2)
   end
 
@@ -63,28 +67,32 @@ defmodule SvgGenerator.Hesitate do
     bulk of recursive drawing
   """
   def print_hesitate(list, a, b, c, a1, b2) do
-    diff = if a>c, do: a+1-c, else: c+1-a
+    diff = if a > c, do: a + 1 - c, else: c + 1 - a
     # how far from center is a
 
     # needs to be geometric sequence
     base = 0.92
-    seq = (a1 - a)
+    seq = a1 - a
 
-    x = a*(:math.pow(base, seq))*@zazz
+    x = a * :math.pow(base, seq) * @zazz
     IO.inspect(x)
-    y = b*@zazz
+    y = b * @zazz
 
-    ry = b2/@magic
-    rx = case diff/@magic > ry do
-      true -> ry
-      false -> (diff/@magic) * 1.75
-    end
+    ry = b2 / @magic
 
-    list = cond do
-      Integer.is_odd(a) && Integer.is_even(b) -> [ellipse(x, y, rx, ry) | list]
-      Integer.is_even(a) && Integer.is_odd(b) -> [ellipse(x, y, rx, ry) | list]
-      true -> list
-    end
+    rx =
+      case diff / @magic > ry do
+        true -> ry
+        false -> diff / @magic * 1.75
+      end
+
+    list =
+      cond do
+        Integer.is_odd(a) && Integer.is_even(b) -> [ellipse(x, y, rx, ry) | list]
+        Integer.is_even(a) && Integer.is_odd(b) -> [ellipse(x, y, rx, ry) | list]
+        true -> list
+      end
+
     print_hesitate(list, a, b - 1, c, a1, b2)
   end
 end
