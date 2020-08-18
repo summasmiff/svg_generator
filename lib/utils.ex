@@ -49,4 +49,66 @@ defmodule SvgGenerator.Utils do
     # or...?
     # (high - low) * t + low
   end
+
+  @doc """
+    points: list of {x, y} tuples
+    returns points
+  """
+  def move_points(points, x_amount, y_amount) do
+    Enum.map(points, fn point ->
+      move_point(point, x_amount, y_amount)
+    end)
+  end
+
+  defp move_point({x, y}, x_amount, y_amount) do
+    new_x = x - x_amount
+    new_y = y - y_amount
+    {new_x, new_y}
+  end
+
+  @doc """
+    Rotates a list of points around an origin.
+    points: list of {x, y} tuples
+    returns points
+  """
+  def rotate_points(points, degree, origin_x, origin_y) do
+    Enum.map(points, fn point ->
+      rotate_point(point, degree, origin_x, origin_y)
+    end)
+  end
+
+  defp rotate_point({x, y}, degree, origin_x, origin_y) do
+    radians = radians(degree)
+
+    new_x = origin_x + (x - origin_x) * :math.cos(radians) - (y - origin_y) * :math.sin(radians)
+
+    new_y = origin_y + (y - origin_y) * :math.cos(radians) + (x - origin_x) * :math.sin(radians)
+
+    {new_x, new_y}
+  end
+
+  @doc """
+    points: list of {x, y} tuples
+    returns points
+  """
+  def shear_points(points, degree, axis) do
+    Enum.map(points, fn {x, y} ->
+      shear_point(x, y, degree, axis)
+    end)
+  end
+
+  defp shear_point(x, y, degree, :x) do
+    # m = hyperbolic cotangent of degree in radians
+    radians = radians(degree)
+    m = :math.atanh(radians)
+    new_x = x + m * y
+    {new_x, y}
+  end
+
+  defp shear_point(x, y, degree, :y) do
+    radians = radians(degree)
+    m = :math.atanh(radians)
+    new_y = y + m * x
+    {x, new_y}
+  end
 end

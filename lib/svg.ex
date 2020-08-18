@@ -36,7 +36,14 @@ defmodule SvgGenerator.SVG do
     individual coordinates are separated by a comma and no spaces
     ex: "850,75  958,137.5 958,262.5 850,325 742,262.6 742,137.5"
   """
-  def polygon(points, opts \\ []) do
+  def polygon(points, opts \\ [])
+
+  def polygon(points, opts) when is_list(points) do
+    string_points = Enum.map(points, fn {x, y} -> "#{x},#{y}" end) |> Enum.join(" ")
+    {:polygon, %{points: string_points, stroke: "#000", fill: "none"}, opts}
+  end
+
+  def polygon(points, opts) when is_binary(points) do
     {:polygon, %{points: points, stroke: "#000", fill: "none"}, opts}
   end
 

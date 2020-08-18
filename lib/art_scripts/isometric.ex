@@ -29,30 +29,9 @@ defmodule SvgGenerator.IsometricCube do
     # Shear horizontally 30 degrees
     # Rotate resulting poly -30 degrees
     [{x1, y1}, {x2, y2}, {x3, y3}, {x4, y4}]
-    |> shear_poly(30, :x)
-    |> rotate_poly(-30)
+    |> shear_points(30, :x)
+    |> rotate_points(-30, @center_x, @center_y)
     |> move_to_center()
-  end
-
-  def shear_poly(points, degree, axis) do
-    Enum.map(points, fn {x, y} ->
-      shear_point(x, y, degree, axis)
-    end)
-  end
-
-  defp shear_point(x, y, degree, :x) do
-    # m = hyperbolic cotangent of degree in radians?
-    radians = radians(degree)
-    m = :math.atanh(radians)
-    new_x = x + m * y
-    {new_x, y}
-  end
-
-  defp shear_point(x, y, degree, :y) do
-    radians = radians(degree)
-    m = :math.atan(radians)
-    new_y = y + m * x
-    {x, new_y}
   end
 
   def move_to_center(points) do
@@ -61,47 +40,15 @@ defmodule SvgGenerator.IsometricCube do
     x_amount = x - @center_x
     y_amount = y - @center_y
 
-    Enum.map(points, fn point ->
-      move_point(point, x_amount, y_amount)
-    end)
-  end
-
-  def move_point({x, y}, x_amount, y_amount) do
-    new_x = x - x_amount
-    new_y = y - y_amount
-    {new_x, new_y}
-  end
-
-  def rotate_poly(points, degree) do
-    Enum.map(points, fn {x, y} ->
-      rotate_point(x, y, degree)
-    end)
-  end
-
-  defp rotate_point(x, y, degree) do
-    radians = radians(degree)
-
-    new_x =
-      @center_x + (x - @center_x) * :math.cos(radians) - (y - @center_y) * :math.sin(radians)
-
-    new_y =
-      @center_y + (y - @center_y) * :math.cos(radians) + (x - @center_x) * :math.sin(radians)
-
-    {new_x, new_y}
-  end
-
-  def make_polygon([{x1, y1}, {x2, y2}, {x3, y3}, {x4, y4}]) do
-    # make this not dependent on list size
-    string_points = "#{x1},#{y1} #{x2},#{y2}, #{x3},#{y3} #{x4},#{y4}"
-    polygon(string_points)
+    move_points(points, x_amount, y_amount)
   end
 
   def print() do
     first = first_poly()
-    second = rotate_poly(first, 120)
-    third = rotate_poly(second, 120)
+    second = rotate_points(first, 120, @center_x, @center_y)
+    third = rotate_points(second, 120, @center_x, @center_y)
 
-    isometrics = Enum.map([first, second, third], &make_polygon(&1))
+    isometrics = Enum.map([first, second, third], &polygon(&1))
 
     # debug = rect(@center_x - 1, @center_y - 1, 2, 2)
 
