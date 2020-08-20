@@ -1,5 +1,9 @@
 defmodule SvgGenerator.Utils do
   require Logger
+  @type x :: float()
+  @type y :: float()
+  @type point :: {x, y}
+  @type points :: [point]
 
   @moduledoc """
     Various graphics utilities, including:
@@ -64,6 +68,45 @@ defmodule SvgGenerator.Utils do
     new_x = x - x_amount
     new_y = y - y_amount
     {new_x, new_y}
+  end
+
+  @doc """
+    scale points in place, maintaining center
+    points: list of {x, y} tuples
+    axis: [:x, :y, :both]
+    returns points
+  """
+  @spec scale_points(points, :integer, :atom) :: points
+  def scale_points(points, amount, :x) do
+    {{min_x, _min_y}, {max_x, _max_y}} = Enum.min_max_by(points, fn {x, _y} -> x end)
+    center_x = (min_x + max_x) / 2
+
+    Enum.map(points, fn point ->
+      x_scale_point(point, center_x, amount)
+    end)
+  end
+
+  def scale_points(points, amount, :y) do
+    {{_min_x, min_y}, {_max_x, max_y}} = Enum.min_max_by(points, fn {_x, y} -> y end)
+    center_y = (min_y + max_y) / 2
+
+    Enum.map(points, fn point ->
+      y_scale_point(point, center_y, amount)
+    end)
+  end
+
+  defp x_scale_point({x, y}, center_x, x_amount) do
+    distance = x - center_x
+    scaled_distance = distance * x_amount
+    new_x = center_x + scaled_distance
+    {new_x, y}
+  end
+
+  defp y_scale_point({x, y}, center_y, y_amount) do
+    distance = y - center_y
+    scaled_distance = distance * y_amount
+    new_y = center_y + scaled_distance
+    {x, new_y}
   end
 
   @doc """

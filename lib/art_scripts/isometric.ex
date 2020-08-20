@@ -11,9 +11,7 @@ defmodule SvgGenerator.IsometricCube do
   @center_y height() / 2
 
   def first_poly() do
-    # Build a square
-    # Vertically scale the top two points of the square
-    scale_amount = 16 * 0.86062
+    # Build a shape
     x1 = @center_x
     y1 = @center_y
 
@@ -21,14 +19,20 @@ defmodule SvgGenerator.IsometricCube do
     y2 = @center_y
 
     x3 = @center_x - 16
-    y3 = @center_y - scale_amount
+    y3 = @center_y - 16
 
     x4 = @center_x
-    y4 = @center_y - scale_amount
+    y4 = @center_y - 16
 
+    [{x1, y1}, {x2, y2}, {x3, y3}, {x4, y4}]
+  end
+
+  def isometric(points) do
+    # Vertically scale the shape
     # Shear horizontally 30 degrees
     # Rotate resulting poly -30 degrees
-    [{x1, y1}, {x2, y2}, {x3, y3}, {x4, y4}]
+    points
+    |> scale_points(0.86062, :y)
     |> shear_points(30, :x)
     |> rotate_points(-30, @center_x, @center_y)
     |> move_to_center()
@@ -44,7 +48,7 @@ defmodule SvgGenerator.IsometricCube do
   end
 
   def print() do
-    first = first_poly()
+    first = first_poly() |> isometric()
     second = rotate_points(first, 120, @center_x, @center_y)
     third = rotate_points(second, 120, @center_x, @center_y)
 
