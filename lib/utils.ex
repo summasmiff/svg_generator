@@ -76,7 +76,7 @@ defmodule SvgGenerator.Utils do
     axis: [:x, :y, :both]
     returns points
   """
-  @spec scale_points(points, :integer, :atom) :: points
+  @spec scale_points(points, :float, :atom) :: points
   def scale_points(points, amount, :x) do
     {{min_x, _min_y}, {max_x, _max_y}} = Enum.min_max_by(points, fn {x, _y} -> x end)
     center_x = (min_x + max_x) / 2

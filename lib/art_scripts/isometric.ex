@@ -4,58 +4,66 @@ defmodule SvgGenerator.IsometricCube do
 
   @moduledoc """
     An isometric projection of a cube is a hexagon.
-    Draws a hexagon that looks like a cube.
-    Eventually to become more interesting.
+    Converts a polygon consisting of all right angles into an isometric perspective.
   """
-  @center_x width() / 2
-  @center_y height() / 2
-
-  def first_poly() do
-    # Build a shape
-    x1 = @center_x
-    y1 = @center_y
-
-    x2 = @center_x - 16
-    y2 = @center_y
-
-    x3 = @center_x - 16
-    y3 = @center_y - 16
-
-    x4 = @center_x
-    y4 = @center_y - 16
-
-    [{x1, y1}, {x2, y2}, {x3, y3}, {x4, y4}]
+  def first_poly(x, y) do
+    # Build a cross shape
+    [
+      {x, y - 16},
+      {x, y - 8},
+      {x - 8, y - 8},
+      {x - 8, y},
+      {x - 16, y},
+      {x - 16, y - 8},
+      {x - 24, y - 8},
+      {x - 24, y - 16},
+      {x - 16, y - 16},
+      {x - 16, y - 24},
+      {x - 8, y - 24},
+      {x - 8, y - 16}
+    ]
   end
 
-  def isometric(points) do
+  def isometric(points, x, y) do
     # Vertically scale the shape
     # Shear horizontally 30 degrees
     # Rotate resulting poly -30 degrees
     points
     |> scale_points(0.86062, :y)
     |> shear_points(30, :x)
-    |> rotate_points(-30, @center_x, @center_y)
-    |> move_to_center()
+    |> rotate_points(-30, x, y)
+    |> move_to_center(x, y)
   end
 
-  def move_to_center(points) do
+  def move_to_center(points, x, y) do
     # Find lowest y (highest y value) and place that point at the center.
-    {x, y} = Enum.max_by(points, fn {_x, y} -> y end)
-    x_amount = x - @center_x
-    y_amount = y - @center_y
+    {max_x, max_y} = Enum.max_by(points, fn {_x, y} -> y end)
+    x_amount = max_x - x
+    y_amount = max_y - y
 
     move_points(points, x_amount, y_amount)
   end
 
+  def create_trigram(x, y) do
+    first = first_poly(x, y) |> isometric(x, y)
+    second = rotate_points(first, 120, x, y)
+    third = rotate_points(second, 120, x, y)
+    Enum.map([first, second, third], &polygon(&1))
+  end
+
+  def print_tile?(n, tile_size), do: rem(n, tile_size) == 0
+
   def print() do
-    first = first_poly() |> isometric()
-    second = rotate_points(first, 120, @center_x, @center_y)
-    third = rotate_points(second, 120, @center_x, @center_y)
-
-    isometrics = Enum.map([first, second, third], &polygon(&1))
-
+    tile_size = 42
+    x_range = 0..width()
+    y_range = 0..height()
     # debug = rect(@center_x - 1, @center_y - 1, 2, 2)
+    list = []
 
-    isometrics
+    for x <- x_range,
+        y <- y_range,
+        print_tile?(x, tile_size),
+        print_tile?(y, tile_size),
+        do: create_trigram(x, y) |> Enum.concat(list)
   end
 end
