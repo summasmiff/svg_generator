@@ -12,11 +12,14 @@ defmodule SvgGenerator.Utils do
   """
 
   @doc """
-    A1 paper size in mm
+    A4 paper size in mm
     if you don't feel like remembering
   """
   def height(), do: 220
   def width(), do: 280
+
+  def a5_height(), do: 148
+  def a5_width(), do: 210
 
   @doc """
     Changes degrees into radians.
@@ -153,5 +156,15 @@ defmodule SvgGenerator.Utils do
     m = :math.atanh(radians)
     new_y = y + m * x
     {x, new_y}
+  end
+
+  @spec n_sided(:integer, point, :integer) :: points
+  def n_sided(n, {x, y}, radius) when n > 2 do
+    theta = 2 * :math.pi() / n
+    angles = 0..(n - 1) |> Enum.map(&(&1 * theta))
+
+    Enum.map(angles, fn angle ->
+      {x + radius * :math.sin(angle), y + radius * :math.cos(angle)}
+    end)
   end
 end

@@ -1,7 +1,7 @@
 defmodule SvgGenerator.CLI do
   require Logger
   import SvgGenerator.Utils
-  import SvgGenerator.IsometricCube
+  import SvgGenerator.HexagonGrid
 
   @moduledoc """
     compile && run: mix escript.build && ./svg_generator file_name
@@ -27,8 +27,8 @@ defmodule SvgGenerator.CLI do
    Tags can be nested by passing a list of tuples as the "opts" third element.
   """
   def generate_svg() do
-    width = width()
-    height = height()
+    height = 140
+    width = 200
 
     elements = elements()
 
