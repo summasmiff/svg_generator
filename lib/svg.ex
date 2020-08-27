@@ -76,11 +76,15 @@ defmodule SvgGenerator.SVG do
     "d" should always be a string comprised of operations separated by commas
     (commas not required but makes it easier to debug)
   """
-  def moveTo(x, y) do
+  def moveTo(x, y) when is_number(x) and is_number(y), do: moveTo({x, y})
+
+  def moveTo({x, y}) do
     "M #{x}, #{y}"
   end
 
-  def lineTo(x, y) do
+  def lineTo(x, y) when is_number(x) and is_number(y), do: lineTo({x, y})
+
+  def lineTo({x, y}) do
     "L #{x}, #{y}"
   end
 

@@ -6,21 +6,24 @@ defmodule SvgGenerator.IsometricCube do
     An isometric projection of a cube is a hexagon.
     Converts a polygon consisting of all right angles into an isometric perspective.
   """
-  def first_poly(x, y) do
+  def first_poly(x, y, size) do
+    third = size / 3
+    two_thirds = third * 2
+
     # Build a cross shape
     [
-      {x, y - 16},
-      {x, y - 8},
-      {x - 8, y - 8},
-      {x - 8, y},
-      {x - 16, y},
-      {x - 16, y - 8},
-      {x - 24, y - 8},
-      {x - 24, y - 16},
-      {x - 16, y - 16},
-      {x - 16, y - 24},
-      {x - 8, y - 24},
-      {x - 8, y - 16}
+      {x, y - two_thirds},
+      {x, y - third},
+      {x - third, y - third},
+      {x - third, y},
+      {x - two_thirds, y},
+      {x - two_thirds, y - third},
+      {x - size, y - third},
+      {x - size, y - two_thirds},
+      {x - two_thirds, y - two_thirds},
+      {x - two_thirds, y - size},
+      {x - third, y - size},
+      {x - third, y - two_thirds}
     ]
   end
 
@@ -44,8 +47,8 @@ defmodule SvgGenerator.IsometricCube do
     move_points(points, x_amount, y_amount)
   end
 
-  def create_trigram(x, y) do
-    first = first_poly(x, y) |> isometric(x, y)
+  def create_trigram(x, y, size) do
+    first = first_poly(x, y, size) |> isometric(x, y)
     second = rotate_points(first, 120, x, y)
     third = rotate_points(second, 120, x, y)
     Enum.map([first, second, third], &polygon(&1))
@@ -54,7 +57,8 @@ defmodule SvgGenerator.IsometricCube do
   def print_tile?(n, tile_size), do: rem(n, tile_size) == 0
 
   def print() do
-    tile_size = 42
+    # adapt to use hex tiling
+    size = 24
     x_range = 0..width()
     y_range = 0..height()
     # debug = rect(@center_x - 1, @center_y - 1, 2, 2)
@@ -62,8 +66,8 @@ defmodule SvgGenerator.IsometricCube do
 
     for x <- x_range,
         y <- y_range,
-        print_tile?(x, tile_size),
-        print_tile?(y, tile_size),
-        do: create_trigram(x, y) |> Enum.concat(list)
+        print_tile?(x, size),
+        print_tile?(y, size),
+        do: create_trigram(x, y, size) |> Enum.concat(list)
   end
 end

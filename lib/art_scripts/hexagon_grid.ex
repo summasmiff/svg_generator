@@ -7,11 +7,11 @@ defmodule SvgGenerator.HexagonGrid do
     Bee shape, strong, efficient
     Leans heavily on https://www.redblobgames.com/grids/hexagons/
   """
+  defguard is_even(value) when is_integer(value) and rem(value, 2) == 0
+
   @doc """
   returns a list of points defining a regular hexagon (oriented with a pointy top)
   """
-  defguard is_even(value) when is_integer(value) and rem(value, 2) == 0
-
   def hexagon(center, radius) do
     n_sided(6, center, radius)
     |> polygon()
@@ -27,8 +27,8 @@ defmodule SvgGenerator.HexagonGrid do
     radius = 10
     hex_width = :math.sqrt(3) * radius
     hex_across = (a5_width() / hex_width) |> round()
-
     x_range = 0..hex_across
+
     hex_height = radius * 1.5
     max_y = (a5_height() / hex_height) |> round()
     y_range = 0..max_y
