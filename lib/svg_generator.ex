@@ -1,7 +1,7 @@
 defmodule SvgGenerator.CLI do
   require Logger
   import SvgGenerator.Utils
-  import SvgGenerator.HexagonGrid
+  import SvgGenerator.FlowField
 
   @moduledoc """
     compile && run: mix escript.build && ./svg_generator file_name
