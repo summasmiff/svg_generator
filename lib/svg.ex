@@ -67,7 +67,15 @@ defmodule SvgGenerator.SVG do
     Equilateral triangle path example:
     d = "M 100 100 L 300 100 L 200 300 z"
   """
-  def path(d, opts \\ []) do
+  def path(d, opts \\ [])
+
+  def path(d, opts) when is_list(d) do
+    [start | rest] = d
+    string_d = Enum.map(rest, &lineTo(&1)) |> Enum.join(" ")
+    path(moveTo(start) <> string_d, opts)
+  end
+
+  def path(d, opts) do
     {:path, %{d: d, stroke: "#000", fill: "none"}, opts}
   end
 
