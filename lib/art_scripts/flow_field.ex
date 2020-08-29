@@ -6,8 +6,11 @@ defmodule SvgGenerator.FlowField do
     many thanks to tyler hobbs for his essay & pseudocode for flow fields
     https://tylerxhobbs.com/essays/2020/flow-fields
   """
+  # controls fineness of grid
   @resolution 5
+  # controls length of curves
   @num_steps 360
+  @total_lines 200
 
   @doc """
     Defines a grid of angles
@@ -38,23 +41,23 @@ defmodule SvgGenerator.FlowField do
   end
 
   def draw_curves(vertex_grid) do
-    grid_height = (a5_height() / @resolution) |> round()
-    y_range = 0..grid_height
+    range = 0..@total_lines
 
-    Enum.map(y_range, fn y ->
-      draw_curve(vertex_grid, y * @resolution)
+    Enum.map(range, fn _ ->
+      x = Enum.random(0..a5_width())
+      y = Enum.random(0..a5_height())
+      draw_curve(vertex_grid, {x, y})
     end)
   end
 
   @doc """
     return a path defining a curve through our vertex grid
   """
-  def draw_curve(vertex_grid, y) do
-    starting_point = {0, y}
+  def draw_curve(vertex_grid, starting_point) do
     steps = 0..@num_steps
 
     curve =
-      Enum.reduce(steps, [starting_point], fn step, acc ->
+      Enum.reduce(steps, [starting_point], fn _step, acc ->
         {x, y} = hd(acc)
         x_offset = a5_width() - x
         y_offset = a5_height() - y
