@@ -167,4 +167,6 @@ defmodule SvgGenerator.Utils do
       {x + radius * :math.sin(angle), y + radius * :math.cos(angle)}
     end)
   end
+
+  defdelegate perlin_2d(point), to: SvgGenerator.Perlin
 end

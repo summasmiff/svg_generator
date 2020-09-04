@@ -1,6 +1,5 @@
 defmodule SvgGenerator.CLI do
   require Logger
-  import SvgGenerator.Utils
   import SvgGenerator.FlowField
 
   @moduledoc """
