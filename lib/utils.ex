@@ -53,8 +53,6 @@ defmodule SvgGenerator.Utils do
     {low, high} = Enum.min_max([n1, n2])
 
     low * (1 - t) + high * t
-    # or...?
-    # (high - low) * t + low
   end
 
   @doc """
@@ -168,5 +166,5 @@ defmodule SvgGenerator.Utils do
     end)
   end
 
-  defdelegate perlin_2d(point), to: SvgGenerator.Perlin
+  defdelegate noise_2d(point), to: SvgGenerator.Perlin
 end

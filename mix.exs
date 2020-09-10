@@ -22,7 +22,7 @@ defmodule SvgGenerator.MixProject do
   defp deps do
     [
       xml_builder: "~> 2.1.1",
-      stream_perlin: "~> 0.1.0"
+      decimal: "~> 2.0"
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"},
     ]
   end

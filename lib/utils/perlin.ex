@@ -1,7 +1,7 @@
 defmodule SvgGenerator.Perlin do
   import SvgGenerator.PermuntationMap
-  import Bitwise
   import SvgGenerator.Utils
+  alias Decimal, as: D
   @type x :: float()
   @type y :: float()
   @type point :: {x, y}
@@ -12,19 +12,29 @@ defmodule SvgGenerator.Perlin do
   """
 
   @doc """
-    should return a value between 0.0 and 1.0
-    currently returns some huge ass integer
-  """
-  @spec perlin_2d(point) :: :float
-  def perlin_2d({x, y} = point) do
-    # Find integer coordinates smaller than our point in grid.
-    # Potential trouble spot: all our points will be ints, so none of our distance vectors mean anything?
-    x_1 = floor(x)
-    y_1 = floor(y)
+    for a given point, should return a consistent value between -1.0 and 1.0
+    'should' being a key word
+    if x, y are integers, value will be 0.0 (x and y should be floats with values to the hundreds place)
+    try multiplying input values by powers of 2 to change octaves
 
-    # bitwise "and" to wrap our coordinates if they exceed 255
-    x_1 = band(x_1, 255)
-    y_1 = band(y_1, 255)
+    ## Examples
+    iex> SvgGenerator.Perlin.noise_2d({10.25, 110.40})
+    -1.1541468749999946
+
+    iex> SvgGenerator.Perlin.noise_2d({140.03, 220.09})
+    -0.8737968776348134
+  """
+  @spec noise_2d(point) :: :float
+  def noise_2d({x, y} = point) do
+    # Find integer coordinates smaller than our point in grid.
+    # divide by one to turn an int into a float
+    x_1 = floor(x) / 1
+    y_1 = floor(y) / 1
+
+    # wrap our coordinates if they exceed 255
+    # should never exceed 512, so don't need to do more than subtract 255
+    x_1 = if x_1 > 255.0, do: x_1 - 255.0, else: x_1
+    y_1 = if y_1 > 255.0, do: y_1 - 255.0, else: y_1
 
     # Create square having 4 lattice points, one for each corner (a b c d)
     a = {x_1, y_1}
@@ -39,32 +49,36 @@ defmodule SvgGenerator.Perlin do
     grad_d = grad(d)
 
     # Calculate "distance vector" from each lattice point to our point
-    dist_a = dist(a, point)
-    dist_b = dist(b, point)
-    dist_c = dist(c, point)
-    dist_d = dist(d, point)
+    dist_a = dist(point, a)
+    dist_b = dist(point, b)
+    dist_c = dist(point, c)
+    dist_d = dist(point, d)
 
     # Calculate dot product of each distance vector and gradient vector
-    # Skip this step?
-    # a_prod = dot_product(dist_a, grad_a)
-    # b_prod = dot_product(dist_b, grad_b)
-    # c_prod = dot_product(dist_c, grad_c)
-    # d_prod = dot_product(dist_d, grad_d)
+    a_prod = dot_product(dist_a, grad_a)
+    b_prod = dot_product(dist_b, grad_b)
+    c_prod = dot_product(dist_c, grad_c)
+    d_prod = dot_product(dist_d, grad_d)
 
     # Compute ease curves for relative x_1, y_1
-    u = ease(x_1)
-    v = ease(y_1)
+    # Returning huge ass numbers?
+    u = ease(x - x_1)
+    v = ease(y - y_1)
 
     # Interpolate results
     lerp(
-      lerp(grad_a, grad_c, u),
-      lerp(grad_b, grad_d, u),
+      lerp(a_prod, c_prod, u),
+      lerp(b_prod, d_prod, u),
       v
     )
   end
 
   @doc """
     Eases coordinate values towards integral values. Makes final output smoother.
+
+    ## Examples
+    iex> SvgGenerator.Perlin.ease(0.25)
+    0.103515625
   """
   @spec ease(:float) :: :float
   def ease(t) do
@@ -81,21 +95,49 @@ defmodule SvgGenerator.Perlin do
 
   @doc """
     find distance between lattice point and original point
-    might need to be reversed?
+
+    ## Examples
+    iex> SvgGenerator.Perlin.dist({0.5, 0.5}, {0.0, 0.0})
+    {0.5, 0.5}
+
+    iex> SvgGenerator.Perlin.dist({0.5, 0.5}, {1.0, 1.0})
+    {-0.5, -0.5}
+
+    iex> SvgGenerator.Perlin.dist({0.5, 0.5}, {1.0, 0.0})
+    {-0.5, 0.5}
+
+    iex> SvgGenerator.Perlin.dist({0.5, 0.5}, {0.0, 1.0})
+    {0.5, -0.5}
   """
-  def dist({x1, y1}, {x, y}) do
-    {x1 - x, y1 - y}
+  def dist({x, y}, {x1, y1}) do
+    dist_x = D.sub(D.from_float(x), D.from_float(x1)) |> D.to_float()
+    dist_y = D.sub(D.from_float(y), D.from_float(y1)) |> D.to_float()
+    {dist_x, dist_y}
   end
 
   @doc """
-    return a pseudorandom value for a given point
-    converts the (x, y) coordinates into indices for @perm
-    If we deal with a 2D noise, we will first do a lookup in the permutation table using x coord.
+    return a pseudorandom gradient vector for a given point.
+    converts the (x, y) coordinates into indices for our @perm map.
     This will return an integer value in the range [0:255].
-    We will add the result of this lookup to y coord.
-    Use the sum of these two numbers as an index of the permutation table again.
+    returns one of:
+    {1, 1}
+    {-1, 1}
+    {1, -1}
+    {-1, -1}
+
+    ## Examples
+    iex> SvgGenerator.Perlin.grad({110, 140})
+    {1, -1}
   """
   def grad({x, y}) do
-    @perm[@perm[x] + y]
+    # get a pseudorandom value from our table for our point
+    value = @perm[@perm[round(x)] + round(y)]
+
+    case rem(value, 4) do
+      3 -> {-1, -1}
+      2 -> {1, -1}
+      1 -> {-1, 1}
+      0 -> {1, 1}
+    end
   end
 end

@@ -10,7 +10,7 @@ defmodule SvgGenerator.FlowField do
   @resolution 5
   # controls length of curves
   @num_steps 360
-  @total_lines 200
+  @total_lines 2000
 
   @doc """
     Defines a grid of angles
