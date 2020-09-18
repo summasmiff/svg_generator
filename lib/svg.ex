@@ -76,7 +76,7 @@ defmodule SvgGenerator.SVG do
   end
 
   def path(d, opts) do
-    {:path, %{d: d, stroke: "#000", fill: "none"}, opts}
+    {:path, %{d: d, stroke: "#000", fill: "none", "stroke-width": 0.5}, opts}
   end
 
   @doc """

@@ -14,15 +14,20 @@ defmodule SvgGenerator.Perlin do
   @doc """
     for a given point, should return a consistent value between -1.0 and 1.0
     'should' being a key word
-    if x, y are integers, value will be 0.0 (x and y should be floats with values to the hundreds place)
-    try multiplying input values by powers of 2 to change octaves
+    if x, y are equal integers, value should be 0.0 (x and y should be floats with values to the hundreds place)
 
     ## Examples
     iex> SvgGenerator.Perlin.noise_2d({10.25, 110.40})
-    -1.1541468749999946
+    -1.1541468749999948
 
     iex> SvgGenerator.Perlin.noise_2d({140.03, 220.09})
     -0.8737968776348134
+
+    iex> SvgGenerator.Perlin.noise_2d({10.0, 10.0})
+    0.0
+
+    iex> SvgGenerator.Perlin.noise_2d({23.0, 23.0})
+    0.0
   """
   @spec noise_2d(point) :: :float
   def noise_2d({x, y} = point) do
@@ -61,7 +66,6 @@ defmodule SvgGenerator.Perlin do
     d_prod = dot_product(dist_d, grad_d)
 
     # Compute ease curves for relative x_1, y_1
-    # Returning huge ass numbers?
     u = ease(x - x_1)
     v = ease(y - y_1)
 
@@ -82,13 +86,20 @@ defmodule SvgGenerator.Perlin do
   """
   @spec ease(:float) :: :float
   def ease(t) do
-    # perlin ease 2.0
+    # perlin ease 2.0 (quintic interpolation)
     ((6 * t - 15) * t + 10) * t * t * t
 
     # perlin ease 1.0
     # t * t * (3 - 2 * t)
   end
 
+  @doc """
+    converts our two vectors at each corner into a real number
+    ## Examples
+
+    iex> SvgGenerator.Perlin.dot_product({0.0, 0.0}, {1, -1})
+    0.0
+  """
   def dot_product({a, b} = _distance_vector, {i, j} = _gradient_vector) do
     a * i + b * j
   end
@@ -108,6 +119,12 @@ defmodule SvgGenerator.Perlin do
 
     iex> SvgGenerator.Perlin.dist({0.5, 0.5}, {0.0, 1.0})
     {0.5, -0.5}
+
+    iex> SvgGenerator.Perlin.dist({23.0, 42.0}, {23.0, 42.0})
+    {0.0, 0.0}
+
+    iex> SvgGenerator.Perlin.dist({23.0, 23.0}, {23.0, 23.0})
+    {0.0, 0.0}
   """
   def dist({x, y}, {x1, y1}) do
     dist_x = D.sub(D.from_float(x), D.from_float(x1)) |> D.to_float()
@@ -118,12 +135,8 @@ defmodule SvgGenerator.Perlin do
   @doc """
     return a pseudorandom gradient vector for a given point.
     converts the (x, y) coordinates into indices for our @perm map.
-    This will return an integer value in the range [0:255].
-    returns one of:
-    {1, 1}
-    {-1, 1}
-    {1, -1}
-    {-1, -1}
+    This will return an integer value in the range 0..255.
+    uses rem (erlang modulo) to map value to a vector.
 
     ## Examples
     iex> SvgGenerator.Perlin.grad({110, 140})
